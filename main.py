@@ -14,9 +14,6 @@ fps = 60
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption('Flappy Bird')
 
-
-
-
 #load images and scale images
 
 #background
@@ -29,7 +26,7 @@ ground = pygame.transform.scale(ground, (864 , ground.get_height()))
 
 birdGroup = pygame.sprite.Group()
 
-flappy = Bird(100, int(screen_height / 2))
+flappy = Bird(100, int(screenHeight / 2))
 
 birdGroup.add(flappy)
 
