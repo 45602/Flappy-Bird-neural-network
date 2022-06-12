@@ -5,31 +5,32 @@ pygame.init()
 
 #define game variables
 groundScroll = 0
-scrollSpeed = 4
+scrollSpeed = 5
 screenWidth = 864
 screenHeight = 936
+
+groundSize = (screenWidth, 150)
+groundHeight = screenHeight- groundSize[1]
+
 clock = pygame.time.Clock()
 fps = 60
 
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption('Flappy Bird')
 
-
-
-
 #load images and scale images
 
 #background
 background = pygame.image.load('images/background-day.png')
-background = pygame.transform.scale(background, (864, 936))
+background = pygame.transform.scale(background, (screenWidth, screenHeight))
 
 #ground
 ground = pygame.image.load('images/base.png')
-ground = pygame.transform.scale(ground, (864 , ground.get_height()))
+ground = pygame.transform.scale(ground, groundSize)
 
 birdGroup = pygame.sprite.Group()
 
-flappy = Bird(100, int(screen_height / 2))
+flappy = Bird(100, int(screenHeight / 2))
 
 birdGroup.add(flappy)
 
@@ -46,9 +47,10 @@ while run:
     birdGroup.update()
 
     #draw and scroll the ground
-    screen.blit(ground, (groundScroll, 768))
+    screen.blit(ground, (groundScroll, groundHeight))
+    screen.blit(ground, (groundScroll + screenWidth, groundHeight))
     groundScroll -= scrollSpeed
-    if abs(groundScroll) > 35:
+    if abs(groundScroll) > screenWidth:
         groundScroll = 0
 
 
