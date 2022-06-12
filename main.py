@@ -1,56 +1,61 @@
 import pygame
+from Bird import Bird
 
 pygame.init()
-screen = pygame.display.set_mode((500,1000))
 
+#define game variables
+groundScroll = 0
+scrollSpeed = 4
+screenWidth = 864
+screenHeight = 936
 clock = pygame.time.Clock()
 fps = 60
 
-background_size = (500, 1000)
-
-base_size = (background_size[0]+background_size[0]/10, 200)
-base_position = (0, background_size[1]- 200)
-base_x = 0
-base_x_speed = 3
-
-pipe_size = (background_size[0]/10, background_size[1]/5)
-pipe_position = (base_position[0] + pipe_size[0], base_position[1] - pipe_size[1])
-
-background = pygame.image.load("images/background-day.png").convert()
-background = pygame.transform.scale(background, background_size)
-
-base = pygame.image.load("images/base.png").convert()
-base = pygame.transform.scale(base, base_size)
-
-bird = pygame.image.load("images/bluebird-midflap.png").convert()
-bird_movement = 0
-
-pipe = pygame.image.load("images/pipe-green.png").convert()
-pipe = pygame.transform.scale(pipe, pipe_size)
+screen = pygame.display.set_mode((screenWidth, screenHeight))
+pygame.display.set_caption('Flappy Bird')
 
 
-#simulacija
-while True:
-    
+
+
+#load images and scale images
+
+#background
+background = pygame.image.load('images/background-day.png')
+background = pygame.transform.scale(background, (864, 936))
+
+#ground
+ground = pygame.image.load('images/base.png')
+ground = pygame.transform.scale(ground, (864 , ground.get_height()))
+
+birdGroup = pygame.sprite.Group()
+
+flappy = Bird(100, int(screen_height / 2))
+
+birdGroup.add(flappy)
+
+
+run = True
+while run:
+
     clock.tick(fps)
 
-    for event in pygame.event.get():
-        if(event.type == pygame.QUIT):
-            pygame.quit()
-        if(event.type == pygame.KEYDOWN):
-            if(event.key == pygame.K_SPACE):
-                bird_movement -= 50
-
-    bird_movement += 3
+    #draw background
     screen.blit(background, (0,0))
-    screen.blit(bird, (50, int(background_size[1] / 2)+bird_movement))
-    
-    #adding base, and moving it 
-    screen.blit(base, (base_x, base_position[1]))
-    base_x -= base_x_speed
-    if abs(base_x) > background_size[0]/10 - 15:
-        base_x = 0
 
-    screen.blit(pipe, pipe_position)
+    birdGroup.draw(screen)
+    birdGroup.update()
+
+    #draw and scroll the ground
+    screen.blit(ground, (groundScroll, 768))
+    groundScroll -= scrollSpeed
+    if abs(groundScroll) > 35:
+        groundScroll = 0
+
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
 
     pygame.display.update()
+
+pygame.quit()
