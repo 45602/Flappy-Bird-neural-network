@@ -1,19 +1,25 @@
 import pygame
+
+from DataAdapter import DataAdapter
 from Bird import Bird
 
 pygame.init()
 
-#define game variables
-groundScroll = 0
-scrollSpeed = 5
-screenWidth = 864
-screenHeight = 936
+#get game variables
+dataAdapter = DataAdapter()
+groundScroll = dataAdapter.groundScroll
+scrollSpeed = dataAdapter.scrollSpeed
+screenWidth = dataAdapter.screenWidth
+screenHeight = dataAdapter.screenHeight
+groundSize = dataAdapter.groundSize
+groundHeight = dataAdapter.groundHeight
+fps = dataAdapter.fps
 
-groundSize = (screenWidth, 150)
-groundHeight = screenHeight- groundSize[1]
 
+#Define game variables
 clock = pygame.time.Clock()
-fps = 60
+flying = False
+gameOver = False
 
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption('Flappy Bird')
@@ -35,6 +41,39 @@ flappy = Bird(100, int(screenHeight / 2))
 birdGroup.add(flappy)
 
 
+class Bird(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        
+        pygame.sprite.Sprite.__init__(self)
+        self.images = []
+        self.index = 0
+        self.counter = 0
+        for num in range(1, 4):
+            img = pygame.image.load('images/redbird-midflap.png')
+            self.images.append(img)
+        self.image = self.images[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.center = [x, y]
+        self.velocity = 0
+        self.clicked = False
+
+    def update(self):
+        self.velocity += 0.5
+
+        if(self.velocity>8):
+            self.velocity=8
+
+        if self.rect.bottom < dataAdapter.groundHeight:
+            self.rect.y += int(self.velocity)
+
+        if(pygame.mouse.get_pressed()[0] == 1 and self.clicked == False) :
+            self.clicked = True
+            self.vel -= 10
+
+        if(pygame.mouse.get_pressed()[0] == 0) :
+            self.clicked = False
+
+
 run = True
 while run:
 
@@ -49,14 +88,23 @@ while run:
     #draw and scroll the ground
     screen.blit(ground, (groundScroll, groundHeight))
     screen.blit(ground, (groundScroll + screenWidth, groundHeight))
-    groundScroll -= scrollSpeed
-    if abs(groundScroll) > screenWidth:
-        groundScroll = 0
 
+    if flappy.rect.bottom > groundHeight:
+        gameOver = True
+        flying = False
 
+    if gameOver == False:
+        groundScroll -= scrollSpeed
+        if abs(groundScroll) > screenWidth:
+            groundScroll = 0
+
+    
+     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.MOUSEBUTTONDOWN and flying == False and gameOver == False:
+            flying = True
 
     pygame.display.update()
 

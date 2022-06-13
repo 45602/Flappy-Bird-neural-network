@@ -1,7 +1,12 @@
 import pygame
+from DataAdapter import DataAdapter
+
+dataAdapter = DataAdapter()
+
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
+        
         pygame.sprite.Sprite.__init__(self)
         self.images = []
         self.index = 0
@@ -12,16 +17,23 @@ class Bird(pygame.sprite.Sprite):
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
+        self.velocity = 0
+        self.clicked = False
 
     def update(self):
+        self.velocity += 0.5
 
-        #handle the animation
-        self.counter += 1
-        flap_cooldown = 5
+        if(self.velocity>8):
+            self.velocity=8
 
-        if self.counter > flap_cooldown:
-            self.counter = 0
-            self.index += 1
-            if self.index >= len(self.images):
-                self.index = 0
-        self.image = self.images[self.index]
+        if self.rect.bottom < dataAdapter.groundHeight:
+            self.rect.y += int(self.velocity)
+
+        if(pygame.mouse.get_pressed()[0] == 1 and self.clicked == False) :
+            self.clicked = True
+            self.velocity -= 10
+
+        if(pygame.mouse.get_pressed()[0] == 0) :
+            self.clicked = False
+
+             
