@@ -32,6 +32,11 @@ bg = pygame.image.load('img/bg.png')
 groundImg = pygame.image.load('img/ground.png')
 buttonImg = pygame.image.load('img/restart.png')
 
+birdGroup = pygame.sprite.Group()
+pipeGroup = pygame.sprite.Group()
+flappy = Bird(100, int(screenHeight / 2))
+birdGroup.add(flappy)
+
 def draw_text(text, font, textCol, x, y):
     img = font.render(text, True, textCol)
     screen.blit(img, (x, y))
@@ -43,13 +48,7 @@ def reset_game():
     score = 0
     return score
 
-birdGroup = pygame.sprite.Group()
-pipeGroup = pygame.sprite.Group()
-flappy = Bird(100, int(screenHeight / 2))
-birdGroup.add(flappy)
-
 button = Button(screenWidth // 2 - 50, screenHeight // 2 - 100, buttonImg)
-
 run = True
 while run:
 
@@ -72,7 +71,7 @@ while run:
                 score += 1
                 passPipe = False
 
-    draw_text(str(score), font, white, int(screenWidth / 2), 20)
+    draw_text(str(score), font, color, int(screenWidth / 2), 20)
 
     if pygame.sprite.groupcollide(birdGroup, pipeGroup, False, False) or flappy.rect.top < 0:
         gameOver = True
@@ -97,6 +96,11 @@ while run:
         if abs(groundScroll) > 35:
             groundScroll = 0
         pipeGroup.update(scrollSpeed)
+
+        print("X and Y of a bird: " + str(birdGroup.sprites()[0].getRect()))
+        if(len(pipeGroup.sprites()) != 0):
+            print("top pipe: " + str(pipeGroup.sprites()[0].getRect()))
+            print("bottom pipe: " + str(pipeGroup.sprites()[1].getRect()))
 
     if gameOver == True:
         if button.draw(screen) == True:

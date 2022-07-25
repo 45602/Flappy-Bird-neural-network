@@ -16,6 +16,12 @@ class Bird(pygame.sprite.Sprite):
         self.vel = 0
         self.clicked = False
 
+    def getRect(self):
+        return self.rect.center
+
+    def getVel(self):
+        return self.vel
+
     def update(self, flying, gameOver):
 
         if flying == True:

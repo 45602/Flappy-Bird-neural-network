@@ -12,6 +12,9 @@ class Pipe(pygame.sprite.Sprite):
         if position == -1:
             self.rect.topleft = [x, y + int(pipeGap / 2)]
 
+    def getRect(self):
+        return self.rect.center
+        
     def update(self, scrollSpeed):
 
         self.rect.x -= scrollSpeed
